@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Details</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 30px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .status-active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .status-inactive {
+            background: rgba(255,255,255,0.1);
+            color: #ffdddd;
+        }
+        
+        .employee-details {
+            padding: 40px;
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .detail-label {
+            flex: 1;
+            color: #666;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .detail-value {
+            flex: 2;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .detail-value strong {
+            font-size: 1.2rem;
+            color: #444;
+        }
+        
+        .actions {
+            padding: 30px 40px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .uuid {
+            font-family: 'Courier New', monospace;
+            background: #f1f3f4;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .salary {
+            color: #2ecc71;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+        
+        .email {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .email:hover {
+            text-decoration: underline;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 th:text="${employee.fullName}">Employee Name</h1>
+            <div th:if="${employee.contractTerminationDate == null}" class="status-badge status-active">
+                ✓ Active Employee
+            </div>
+            <div th:if="${employee.contractTerminationDate != null}" class="status-badge status-inactive">
+                ✗ Inactive Employee
+            </div>
+        </div>
+        
+        <div class="employee-details">
+            <div class="detail-row">
+                <div class="detail-label">Employee ID</div>
+                <div class="detail-value uuid" th:text="${employee.uuid}">UUID</div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-label">Name</div>
+                <div class="detail-value">
+                    <strong th:text="${employee.fullName}">Full Name</strong><br>
+                    <small th:text="${employee.firstName + ' ' + employee.lastName}">First Last</small>
+                </div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-label">Contact</div>
+                <div class="detail-value">
+                    <a class="email" th:href="'mailto:' + ${employee.email}" th:text="${employee.email}">email@example.com</a><br>
+                    <span th:if="${employee.age != null}" th:text="'Age: ' + ${employee.age}">Age: 30</span>
+                </div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-label">Position</div>
+                <div class="detail-value">
+                    <strong th:text="${employee.jobTitle}">Job Title</strong><br>
+                    <span class="salary" th:if="${employee.salary != null}" th:text="'$' + ${#numbers.formatInteger(employee.salary, 1, 'COMMA')}">$75,000</span>
+                </div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-label">Employment Dates</div>
+                <div class="detail-value">
+                    <div>Hired: <span th:text="${#temporals.format(employee.contractHireDate, 'MMMM dd, yyyy')}">January 01, 2023</span></div>
+                    <div th:if="${employee.contractTerminationDate != null}">
+                        Terminated: <span th:text="${#temporals.format(employee.contractTerminationDate, 'MMMM dd, yyyy')}">December 31, 2023</span>
+                    </div>
+                    <div th:if="${employee.contractTerminationDate == null}">
+                        <em>Currently employed</em>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <a href="/api/v1/employee" class="btn btn-secondary">← Back to All Employees</a>
+        </div>
+    </div>
+</body>
+</html>

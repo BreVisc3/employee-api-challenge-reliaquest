@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .api-section {
+            margin-bottom: 30px;
+        }
+        
+        .api-section h2 {
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .endpoint {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .endpoint h3 {
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .method {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .path {
+            color: #555;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        
+        .description {
+            color: #666;
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        
+        .curl-example {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+        
+        .test-button {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 15px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .test-button:hover {
+            background: #5a67d8;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Employee Management API</h1>
+            <p>RESTful API for managing employee records. Built with Spring Boot.</p>
+        </div>
+        
+        <div class="api-section">
+            <h2>Available Endpoints</h2>
+            
+            <div class="endpoint">
+                <h3><span class="method">GET</span> <span class="path">/api/v1/employee</span></h3>
+                <p class="description">Retrieve all employees from the system.</p>
+                <div class="curl-example">
+                    curl -X GET http://localhost:8080/api/v1/employee
+                </div>
+                <a href="/api/v1/employee" class="test-button" target="_blank">Test Endpoint</a>
+            </div>
+            
+            <div class="endpoint">
+                <h3><span class="method">GET</span> <span class="path">/api/v1/employee/{uuid}</span></h3>
+                <p class="description">Retrieve a specific employee by their UUID.</p>
+                <div class="curl-example">
+                    curl -X GET http://localhost:8080/api/v1/employee/550e8400-e29b-41d4-a716-446655440000
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <h3><span class="method">POST</span> <span class="path">/api/v1/employee</span></h3>
+                <p class="description">Create a new employee in the system.</p>
+                <div class="curl-example">
+                    curl -X POST http://localhost:8080/api/v1/employee \<br>
+                    &nbsp;&nbsp;-H "Content-Type: application/json" \<br>
+                    &nbsp;&nbsp;-d '{"firstName":"John","email":"john@example.com"}'
+                </div>
+            </div>
+        </div>
+        
+        <div class="api-section">
+            <h2>Quick Test</h2>
+            <div id="test-result"></div>
+            <button onclick="testAPI()" class="test-button">Test API Connection</button>
+        </div>
+        
+        <div class="footer">
+            <p>Employee Management System | Spring Boot 3.2.10 | Java 17</p>
+        </div>
+    </div>
+    
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('test-result');
+            resultDiv.innerHTML = '<p style="color:#666">Testing connection...</p>';
+            
+            try {
+                const response = await fetch('/api/v1/employee');
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <div style="background:#d4edda;color:#155724;padding:15px;border-radius:8px;margin-top:10px;">
+                            <p>✅ API Connection Successful!</p>
+                            <p>Found ${data.length} employees in the system.</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div style="background:#f8d7da;color:#721c24;padding:15px;border-radius:8px;margin-top:10px;">
+                            <p>❌ API Connection Failed (Status: ${response.status})</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div style="background:#f8d7da;color:#721c24;padding:15px;border-radius:8px;margin-top:10px;">
+                        <p>❌ Connection Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
